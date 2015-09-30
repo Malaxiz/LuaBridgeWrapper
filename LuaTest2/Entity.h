@@ -11,13 +11,34 @@
 
 #include <stdio.h>
 
+#include "LuaScript.h"
+#include "LuaReference.h"
+
 
 class Entity {
     
 public:
     Entity();
+    ~Entity();
     
-    void onLoop();
+    void init(std::string scriptPath, std::string object);
+    
+    void onLoop(Entity* other);
+    
+    int getHealth() const { return health; }
+    void setHealth(const int& value) { health = value; }
+    int health;
+    
+    std::string getName() const { return name; }
+    void setName(const std::string& value) { name = value; }
+    std::string name;
+    
+    void say(std::string phrase) { std::cout << phrase << "\n"; }
+    
+private:
+    LuaScript* script;
+    
+    LuaReference* onLoopFunc;
     
 };
 

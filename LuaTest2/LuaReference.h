@@ -31,13 +31,10 @@ public:
     LuaReference(lua_State* L, A ... args) :
         luaRef(init(L, std::forward<A>(args) ...)) {
         _name = strdup(addToName(std::forward<A>(args) ...).str().c_str());
+        
     }
     
-    ~LuaReference() {
-        delete _name;
-    }
-    
-    // =========================================================
+    // ==============================================================
     
     template<typename T>
     luabridge::LuaRef init(lua_State* L, T head) {
