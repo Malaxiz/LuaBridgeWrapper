@@ -60,10 +60,21 @@ int main(int argc, const char* argv[]) {
     
     Entity myEntity;
     myEntity.init(&entityScript, "player");
+    myEntity.setName("Rick");
     
     Entity myEntity2;
-    myEntity2.init(&entityScript, "player2");
+    myEntity2.init(&entityScript, "player");
+    myEntity2.setName("Morty");
     
     myEntity.onLoop(&myEntity2);
+    myEntity2.onLoop(&myEntity);
+    myEntity.onLoop(&myEntity2);
+    myEntity2.onLoop(&myEntity);
+    myEntity.onLoop(&myEntity2);
+    myEntity2.onLoop(&myEntity);
+    myEntity.onLoop(&myEntity2);
+    myEntity2.onLoop(&myEntity);
+    myEntity.onLoop(&myEntity2);
+    myEntity2.onLoop(&myEntity);
     
 }

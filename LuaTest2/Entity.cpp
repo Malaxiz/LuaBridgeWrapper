@@ -10,19 +10,13 @@
 
 
 Entity::Entity() {
-    
+    health = 5;
 }
 
 void Entity::init(LuaScript* script, std::string object) {
     
-    this->script = script;
-    
-    //script->doFile();
-    
-    script->registerReference(object.c_str(), "name");
     script->registerReference(object.c_str(), "onLoop");
     
-    name = script->getReference(object + ".name")->cast<std::string>();
     onLoopFunc = script->getReference(object + ".onLoop");
     
 }

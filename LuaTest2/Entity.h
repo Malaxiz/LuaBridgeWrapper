@@ -34,9 +34,7 @@ public:
     
     void say(std::string phrase) { std::cout << phrase << "\n"; }
     
-private:
-    LuaScript* script;
-    
+private:    
     LuaReference* onLoopFunc;
     
 };
