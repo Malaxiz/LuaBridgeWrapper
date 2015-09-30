@@ -8,11 +8,8 @@
 
 #include "LuaScript.h"
 
-LuaScript::LuaScript(std::string scriptName) {
-    L = luaL_newstate();
-    luaL_openlibs(L);
-    
-    _scriptName = scriptName;
+LuaScript::LuaScript(lua_State* L, std::string scriptName) :
+_L(L), _scriptName(scriptName) {
 }
 
 LuaScript::~LuaScript() {
@@ -25,7 +22,7 @@ LuaScript::~LuaScript() {
 }
 
 void LuaScript::doFile() {
-    luaL_dofile(L, _scriptName.c_str());
+    luaL_dofile(_L, _scriptName.c_str());
 }
 
 LuaReference* LuaScript::getReference(std::string ref) {

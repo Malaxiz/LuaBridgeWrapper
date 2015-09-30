@@ -27,7 +27,7 @@ extern "C" {
 class LuaScript {
     
 public:
-    LuaScript(std::string scriptName);
+    LuaScript(lua_State* L, std::string scriptName);
     ~LuaScript();
     
     void doFile();
@@ -44,15 +44,15 @@ public:
     //    void registerFunction(std::string ref, MemFn funcPtr);
     
     luabridge::Namespace getNamespace() {
-        return luabridge::getGlobalNamespace(L);
+        return luabridge::getGlobalNamespace(_L);
     }
     
     lua_State* getLuaState() {
-        return L;
+        return _L;
     }
     
 private:
-    lua_State* L;
+    lua_State* _L;
     std::map<std::string, LuaReference*> _references;
     
     std::string _scriptName;

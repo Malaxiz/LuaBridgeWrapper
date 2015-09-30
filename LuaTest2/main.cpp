@@ -14,19 +14,24 @@
 #include "Entity.h"
 
 
-LuaScript talkable("Talkable.lua");
-LuaScript hurtable("Hurtable.lua");
-
 std::string printMessage(const std::string s) {
     std::cout << s << std::endl;
     return "returned";
 }
 
-int getValue() {
-    return hurtable.getReference("y")->cast<int>();
-}
-
 int main(int argc, const char* argv[]) {
+    
+    lua_State* L = luaL_newstate();
+    luaL_openlibs(L);
+    
+    luabridge::getGlobalNamespace(L)
+        .beginClass<Entity>("Entity")
+            .addConstructor<void(*)(void)>()
+            .addProperty("name", &Entity::getName, &Entity::setName)
+            .addProperty("health", &Entity::getHealth, &Entity::setHealth)
+            .addFunction("say", &Entity::say)
+        .endClass()
+        .addFunction("printMessage", printMessage);
     
 //    LuaScript luaScript("script.lua");
 //    
@@ -50,28 +55,15 @@ int main(int argc, const char* argv[]) {
 //    std::cout << "TestFunction: "; luaScript.getReference("test.testFunction")->call();
 //    std::cout << "Nested variable: " << luaScript.getReference("test.asdf.bla.var")->cast<std::string>() << "\n";
     
-    
-//    talkable.getNamespace().
-//        beginNamespace("game").
-//            addFunction("getValue", getValue).
-//        endNamespace();
-//    
-//    talkable.doFile();
-//    hurtable.doFile();
-//    
-//    hurtable.registerReference("y");
-//    talkable.registerReference("myFunc");
-//    
-//    talkable.getReference("myFunc")->call();
+    LuaScript entityScript(L, "Player.lua");
+    entityScript.doFile();
     
     Entity myEntity;
-    myEntity.init("Player.lua", "player");
+    myEntity.init(&entityScript, "player");
     
     Entity myEntity2;
-    myEntity2.init("Player.lua", "player2");
+    myEntity2.init(&entityScript, "player2");
     
     myEntity.onLoop(&myEntity2);
-    
-    
     
 }

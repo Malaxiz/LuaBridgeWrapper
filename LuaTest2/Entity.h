@@ -19,9 +19,8 @@ class Entity {
     
 public:
     Entity();
-    ~Entity();
     
-    void init(std::string scriptPath, std::string object);
+    void init(LuaScript* script, std::string object);
     
     void onLoop(Entity* other);
     

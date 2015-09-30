@@ -13,23 +13,11 @@ Entity::Entity() {
     
 }
 
-Entity::~Entity() {
-    delete script;
-}
-
-void Entity::init(std::string scriptPath, std::string object) {
+void Entity::init(LuaScript* script, std::string object) {
     
-    script = new LuaScript(scriptPath);
+    this->script = script;
     
-    script->getNamespace()
-        .beginClass<Entity>("Entity")
-            .addConstructor<void(*)(void)>()
-            .addProperty("name", &Entity::getName, &Entity::setName)
-            .addProperty("health", &Entity::getHealth, &Entity::setHealth)
-            .addFunction("say", &Entity::say)
-        .endClass();
-    
-    script->doFile();
+    //script->doFile();
     
     script->registerReference(object.c_str(), "name");
     script->registerReference(object.c_str(), "onLoop");
