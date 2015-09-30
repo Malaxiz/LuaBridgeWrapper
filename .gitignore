@@ -1,0 +1,8 @@
+.DS_Store
+*.xcodeproj
+*.xcodeproj/
+*.app
+*.plist
+*/Images.xcassets/
+LuaTest2/lua/
+LuaTest2/LuaBridge/
