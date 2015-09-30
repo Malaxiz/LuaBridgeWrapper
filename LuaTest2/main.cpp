@@ -58,6 +58,8 @@ int main(int argc, const char* argv[]) {
     LuaScript entityScript(L, "Player.lua");
     entityScript.doFile();
     
+    // --
+    
     Entity myEntity;
     myEntity.init(&entityScript, "player");
     myEntity.setName("Rick");
@@ -68,13 +70,8 @@ int main(int argc, const char* argv[]) {
     
     myEntity.onLoop(&myEntity2);
     myEntity2.onLoop(&myEntity);
-    myEntity.onLoop(&myEntity2);
-    myEntity2.onLoop(&myEntity);
-    myEntity.onLoop(&myEntity2);
-    myEntity2.onLoop(&myEntity);
-    myEntity.onLoop(&myEntity2);
-    myEntity2.onLoop(&myEntity);
-    myEntity.onLoop(&myEntity2);
-    myEntity2.onLoop(&myEntity);
+    
+    printMessage(myEntity.onSerialize());
+    printMessage(myEntity2.onSerialize());
     
 }

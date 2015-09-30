@@ -33,9 +33,10 @@ public:
     void doFile();
     
     template<typename ... A>
-    void registerReference(A ... args) {
+    LuaReference* registerReference(A ... args) {
         LuaReference* ref = new LuaReference(getLuaState(), std::forward<A>(args) ...);
         _references[ref->getName()] = ref;
+        return ref;
     }
     
     LuaReference* getReference(std::string ref);

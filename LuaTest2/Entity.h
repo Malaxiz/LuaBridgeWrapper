@@ -24,6 +24,8 @@ public:
     
     void onLoop(Entity* other);
     
+    std::string onSerialize();
+    
     int getHealth() const { return health; }
     void setHealth(const int& value) { health = value; }
     int health;
@@ -36,6 +38,7 @@ public:
     
 private:    
     LuaReference* onLoopFunc;
+    LuaReference* onSerializeFunc;
     
 };
 
