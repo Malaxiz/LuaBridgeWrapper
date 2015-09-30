@@ -40,11 +40,13 @@ int main(int argc, const char* argv[]) {
     luaScript.registerReference("test", "testString");
     luaScript.registerReference("test", "testNumber");
     luaScript.registerReference("test", "testFunction");
+    luaScript.registerReference("test", "asdf", "bla", "var");
     
-    std::cout << "SumNumbers: " << luaScript.getReference("sumNumbers")->call(5, 6) << "\n";
-    std::cout << "TestString: " << luaScript.getReference("testString")->cast<std::string>() << "\n";
-    std::cout << "TestNumber: " << luaScript.getReference("testNumber")->cast<int>() << "\n";
-    std::cout << "TestFunction: "; luaScript.getReference("testFunction")->call();
+    std::cout << "SumNumbers: " << luaScript.getReference("test.sumNumbers")->call(5, 6) << "\n";
+    std::cout << "TestString: " << luaScript.getReference("test.testString")->cast<std::string>() << "\n";
+    std::cout << "TestNumber: " << luaScript.getReference("test.testNumber")->cast<int>() << "\n";
+    std::cout << "TestFunction: "; luaScript.getReference("test.testFunction")->call();
+    std::cout << "Nested variable: " << luaScript.getReference("test.asdf.bla.var")->cast<std::string>() << "\n";
     
     
 //    talkable.getNamespace().

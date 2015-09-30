@@ -5,6 +5,9 @@
 
 
 test = {}
+test.asdf = {}
+test.asdf.bla = {}
+test.asdf.bla.var = "This is a very nested variable"
 
 test.sumNumbers = function(a,b)
         return a + b

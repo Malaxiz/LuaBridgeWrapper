@@ -11,6 +11,9 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <sstream>
+#include <string>
+#include <string.h>
 
 extern "C" {
 # include "lua/lua.h"
@@ -24,27 +27,20 @@ extern "C" {
 class LuaReference {
     
 public:
-//    LuaReference(lua_State* L, std::string name) :
-//    luaRef(L, luabridge::getGlobal(L, name.c_str())), _name(name) {  }
-//    
-//    LuaReference(lua_State* L, LuaReference* reference, std::string name) :
-//    luaRef(reference->getRefFromParent(reference->luaRef, name)), _name(name) {  }
-    
     template<typename ... A>
     LuaReference(lua_State* L, A ... args) :
         luaRef(init(L, std::forward<A>(args) ...)) {
-
+        _name = strdup(addToName(std::forward<A>(args) ...).str().c_str());
     }
     
-//    luabridge::LuaRef getRefFromParent(luabridge::LuaRef ref, std::string name) {
-//        return ref[name];
-//    }
+    ~LuaReference() {
+        delete _name;
+    }
     
     // =========================================================
     
     template<typename T>
     luabridge::LuaRef init(lua_State* L, T head) {
-        _name = head;
         return luabridge::getGlobal(L, head);
     }
     
@@ -56,7 +52,6 @@ public:
     
     template<typename T>
     luabridge::LuaRef _init(luabridge::LuaRef parent, T head) {
-        _name = head;
         return parent[head];
     }
     
@@ -85,6 +80,19 @@ public:
     
 private:
     const char* _name;
+    
+    template<typename T>
+    std::stringstream addToName(T head) {
+        return std::stringstream(head);
+    }
+    
+    template<typename T, typename ... A>
+    std::stringstream addToName(T head, A ... args) {
+        std::stringstream s;
+        s << head << ".";
+        s << addToName(std::forward<A>(args) ...).str();
+        return s;
+    }
     
 };
 

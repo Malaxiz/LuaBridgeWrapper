@@ -28,7 +28,7 @@ void LuaScript::doFile() {
     luaL_dofile(L, _scriptName.c_str());
 }
 
-LuaReference* LuaScript::getReference(const char* ref) {
+LuaReference* LuaScript::getReference(std::string ref) {
     return _references[ref];
 }
 

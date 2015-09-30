@@ -38,7 +38,7 @@ public:
         _references[ref->getName()] = ref;
     }
     
-    LuaReference* getReference(const char* ref);
+    LuaReference* getReference(std::string ref);
     
     //    template <class MemFn>
     //    void registerFunction(std::string ref, MemFn funcPtr);
@@ -53,7 +53,7 @@ public:
     
 private:
     lua_State* L;
-    std::map<const char*, LuaReference*> _references;
+    std::map<std::string, LuaReference*> _references;
     
     std::string _scriptName;
     
