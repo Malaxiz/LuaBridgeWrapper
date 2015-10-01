@@ -31,6 +31,7 @@ public:
     LuaReference(lua_State* L, A ... args) :
         luaRef(init(L, std::forward<A>(args) ...)) {
         _name = strdup(addToName(std::forward<A>(args) ...).str().c_str());
+        //std::cout << _name << "\n";
         
     }
     
@@ -42,9 +43,9 @@ public:
     }
     
     template<typename T, typename ... A>
-    luabridge::LuaRef init(lua_State* L, T head, A ... args) {
+    luabridge::LuaRef init(lua_State* L, T head, A ... tail) {
         luabridge::LuaRef ref = luabridge::getGlobal(L, head);
-        return _init(ref, std::forward<A>(args) ...);
+        return _init(ref, std::forward<A>(tail) ...);
     }
     
     template<typename T>

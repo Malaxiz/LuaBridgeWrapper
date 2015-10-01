@@ -7,9 +7,11 @@
 //
 
 #include <iostream>
+#include <vector>
 
 #include "LuaScript.h"
 #include "LuaReference.h"
+#include "EntityScript.h"
 
 #include "Entity.h"
 
@@ -27,47 +29,33 @@ int main(int argc, const char* argv[]) {
     luabridge::getGlobalNamespace(L)
         .beginClass<Entity>("Entity")
             .addConstructor<void(*)(void)>()
-            .addProperty("name", &Entity::getName, &Entity::setName)
-            .addProperty("health", &Entity::getHealth, &Entity::setHealth)
             .addFunction("say", &Entity::say)
+            .addFunction("getString", &Entity::getStringVariable)
+            .addFunction("setString", &Entity::setStringVariable)
+            .addFunction("getInt", &Entity::getIntVariable)
+            .addFunction("setInt", &Entity::setIntVariable)
         .endClass()
         .addFunction("printMessage", printMessage);
+
+    // --
     
-//    LuaScript luaScript("script.lua");
-//    
-//    luaScript.getNamespace().
-//        beginNamespace("game").
-//            addFunction("printMessage", printMessage).
-//        endNamespace();
-//    
-//    luaScript.doFile();
-//    
-//    
-//    luaScript.registerReference("test", "sumNumbers");
-//    luaScript.registerReference("test", "testString");
-//    luaScript.registerReference("test", "testNumber");
-//    luaScript.registerReference("test", "testFunction");
-//    luaScript.registerReference("test", "asdf", "bla", "var");
-//    
-//    std::cout << "SumNumbers: " << luaScript.getReference("test.sumNumbers")->call(5, 6) << "\n";
-//    std::cout << "TestString: " << luaScript.getReference("test.testString")->cast<std::string>() << "\n";
-//    std::cout << "TestNumber: " << luaScript.getReference("test.testNumber")->cast<int>() << "\n";
-//    std::cout << "TestFunction: "; luaScript.getReference("test.testFunction")->call();
-//    std::cout << "Nested variable: " << luaScript.getReference("test.asdf.bla.var")->cast<std::string>() << "\n";
+    LuaScript script(L, "Player.lua");
+    script.doFile();
     
-    LuaScript entityScript(L, "Player.lua");
-    entityScript.doFile();
+    EntityScript entityScript(&script);
     
     // --
     
     Entity myEntity;
     myEntity.init(&entityScript, "player");
-    myEntity.setName("Rick");
     
     Entity myEntity2;
     myEntity2.init(&entityScript, "player");
-    myEntity2.setName("Morty");
     
+    myEntity.onLoop(&myEntity2);
+    myEntity2.onLoop(&myEntity);
+    myEntity.onLoop(&myEntity2);
+    myEntity2.onLoop(&myEntity);
     myEntity.onLoop(&myEntity2);
     myEntity2.onLoop(&myEntity);
     
