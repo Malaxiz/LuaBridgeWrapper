@@ -25,8 +25,8 @@ player = {
     end,
 
     onLoop = function(this, entity)
-        a = printMessage("C++ Function")
-        print(a)
+        -- a = printMessage("C++ Function")
+        -- print(a)
 
         this:say("My name is " .. this:getString("name") .. ", and my health is " .. this:getInt("health"))
     end,

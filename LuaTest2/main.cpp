@@ -19,14 +19,14 @@
 
 lua_State* L = luaL_newstate();
 
-int printMessage(const std::string s) {
+void printMessage(const std::string s) {
     std::cout << s << std::endl;
-    //return "returned";
-    
-    luaL_Buffer b;
-    luaL_buffinit(L, &b);
-    luaL_pushresult(&b);
-    luaL_addvalue(&b);
+//    //return "returned";
+//    
+//    luaL_Buffer b;
+//    luaL_buffinit(L, &b);
+//    luaL_pushresult(&b);
+//    luaL_addvalue(&b);
 }
 
 int main(int argc, const char* argv[]) {
