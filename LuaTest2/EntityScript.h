@@ -10,9 +10,10 @@
 #define __LuaTest2__EntityScript__
 
 #include <stdio.h>
-#include <vector>
+#include <map>
 
 #include "LuaScript.h"
+#include "LuaReference.h"
 
 
 class EntityScript {
@@ -25,12 +26,10 @@ public:
     std::string object;
     
     bool hasReference(std::string ref) {
-        return std::find(_references.begin(), _references.end(), ref) != _references.end();
+        return references.find(ref) != references.end();
     }
     
-    
-private:
-    std::vector<std::string> _references;
+    std::map<std::string, LuaReference*> references;
     
 };
 

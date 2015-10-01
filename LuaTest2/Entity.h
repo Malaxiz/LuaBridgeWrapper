@@ -10,6 +10,7 @@
 #define __LuaTest2__Entity__
 
 #include <stdio.h>
+#include <map>
 
 #include "LuaScript.h"
 #include "LuaReference.h"
@@ -25,11 +26,13 @@ class Entity {
 public:
     Entity();
     
-    void init(EntityScript* script, std::string object);
+    void init(EntityScript* script);
     
     void onLoop(Entity* other);
     
     std::string onSerialize();
+    
+    // ================ Getters and setters ============== //
     
     void setStringVariable(std::string key, std::string value) {
         getVariable(key)->SetString(value.c_str(), (int)value.length(), variables.GetAllocator());
@@ -40,10 +43,20 @@ public:
     }
     
     std::string getStringVariable(std::string key) {
+        if(!getVariable(key)) {
+            std::cout << "WARNING: Variable not found: " << key << "\n";
+            return "";
+        }
+            
         return getVariable(key)->GetString();
     }
     
     int getIntVariable(std::string key) {
+        if(!getVariable(key)) {
+            std::cout << "WARNING: Variable not found: " << key << "\n";
+            return 0;
+        }
+        
         return getVariable(key)->GetInt();
     }
     
@@ -56,12 +69,20 @@ public:
             return nullptr;
     }
     
+    // =================================================== //
+    
     void say(std::string phrase) { std::cout << phrase << "\n"; }
     
-private:    
-    LuaReference* onLoopFunc;
-    LuaReference* onSerializeFunc;
-    LuaReference* onInitFunc;
+    bool hasReference(std::string ref) {
+        return references.find(ref) != references.end();
+    }
+    
+private:
+    std::map<std::string, LuaReference*> references;
+    
+//    LuaReference* onLoopFunc;
+//    LuaReference* onSerializeFunc;
+//    LuaReference* onInitFunc;
     
     rapidjson::Document variables;
     

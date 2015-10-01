@@ -39,27 +39,26 @@ int main(int argc, const char* argv[]) {
 
     // --
     
-    LuaScript script(L, "Player.lua");
-    script.doFile();
+    LuaScript eneScript(L, "Enemy.lua");
+    LuaScript entScript(L, "Player.lua");
     
-    EntityScript entityScript(&script);
+    EntityScript entityScript(&entScript);
+    EntityScript enemyScript(&eneScript);
     
     // --
     
     Entity myEntity;
-    myEntity.init(&entityScript, "player");
+    myEntity.init(&entityScript);
     
     Entity myEntity2;
-    myEntity2.init(&entityScript, "player");
+    myEntity2.init(&enemyScript);
     
-    myEntity.onLoop(&myEntity2);
-    myEntity2.onLoop(&myEntity);
-    myEntity.onLoop(&myEntity2);
-    myEntity2.onLoop(&myEntity);
-    myEntity.onLoop(&myEntity2);
-    myEntity2.onLoop(&myEntity);
+    while(myEntity.getIntVariable("health") > 0) { // Loop and let enemy attack player
+        myEntity.onLoop(&myEntity2);
+        myEntity2.onLoop(&myEntity);
+    }
     
     printMessage(myEntity.onSerialize());
-    printMessage(myEntity2.onSerialize());
+    printMessage(myEntity2.onSerialize()); // Will not run, because enemy does not have a seralize function
     
 }

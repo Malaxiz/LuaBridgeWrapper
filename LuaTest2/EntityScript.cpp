@@ -11,6 +11,8 @@
 
 EntityScript::EntityScript(LuaScript* script) : script(script) {
     
+    script->doFile();
+    
     script->registerReference("game", "object");
     object = script->getReference("game.object")->cast<std::string>();
     script->registerReference(object.c_str());
@@ -23,9 +25,7 @@ EntityScript::EntityScript(LuaScript* script) : script(script) {
         luabridge::LuaRef val = luabridge::LuaRef::fromStack(script->getLuaState(), -1);
         
         std::string value = val.cast<std::string>();
-        _references.push_back(value);
-        
-        script->registerReference(script->getReference("game.object")->cast<std::string>().c_str(), value.c_str());
+        references[value] = script->registerReference(script->getReference("game.object")->cast<std::string>().c_str(), value.c_str());
         
         lua_pop(script->getLuaState(), 1);
     }

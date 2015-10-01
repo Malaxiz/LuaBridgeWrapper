@@ -15,42 +15,42 @@ Entity::Entity() {
     variables.Parse("{}");
 }
 
-void Entity::init(EntityScript* script, std::string object) {
+void Entity::init(EntityScript* script) {
     
-    script->script->getReference(script->object + ".variables")->luaRef.push(script->script->getLuaState());
-    push(script->script->getLuaState(), luabridge::Nil ());
-    while(lua_next(script->script->getLuaState(), -2))
-    {
-        luabridge::LuaRef key = luabridge::LuaRef::fromStack(script->script->getLuaState(), -2);
-        luabridge::LuaRef val = luabridge::LuaRef::fromStack(script->script->getLuaState(), -1);
-        lua_pop(script->script->getLuaState(), 1);
-        
-        auto jsonKey = rapidjson::Value(key.cast<std::string>().c_str(), variables.GetAllocator());
-        if(val.isNumber())
-            variables.AddMember(jsonKey, val.cast<int>(), variables.GetAllocator());
-        else if(val.isString()) {
-            auto value = rapidjson::Value(val.cast<std::string>().c_str(), variables.GetAllocator());
-            variables.AddMember(jsonKey, value, variables.GetAllocator());
+    if(script->hasReference("variables")) {
+        script->script->getReference(script->object + ".variables")->luaRef.push(script->script->getLuaState());
+        push(script->script->getLuaState(), luabridge::Nil ());
+        while(lua_next(script->script->getLuaState(), -2))
+        {
+            luabridge::LuaRef key = luabridge::LuaRef::fromStack(script->script->getLuaState(), -2);
+            luabridge::LuaRef val = luabridge::LuaRef::fromStack(script->script->getLuaState(), -1);
+            lua_pop(script->script->getLuaState(), 1);
+            
+            auto jsonKey = rapidjson::Value(key.cast<std::string>().c_str(), variables.GetAllocator());
+            if(val.isNumber())
+                variables.AddMember(jsonKey, val.cast<int>(), variables.GetAllocator());
+            else if(val.isString()) {
+                auto value = rapidjson::Value(val.cast<std::string>().c_str(), variables.GetAllocator());
+                variables.AddMember(jsonKey, value, variables.GetAllocator());
+            }
         }
     }
     
-    onLoopFunc = script->hasReference("onLoop") ? script->script->getReference(object + ".onLoop") : nullptr;
-    onSerializeFunc = script->hasReference("onSerialize") ? script->script->getReference(object + ".onSerialize") : nullptr;
-    onInitFunc = script->hasReference("onInit") ? script->script->getReference(object + ".onInit") : nullptr;
+    references = script->references;
     
-    if(onInitFunc)
-        onInitFunc->call(this); // Call init function
+    if(hasReference("onInit"))
+        references["onInit"]->call(this); // Call init function
     
 }
 
 void Entity::onLoop(Entity* other) {
-    if(onLoopFunc)
-        onLoopFunc->call(this, other);
+    if(hasReference("onLoop"))
+        references["onLoop"]->call(this, other);
 }
 
 std::string Entity::onSerialize() {
-    if(onSerializeFunc)
-        return onSerializeFunc->call(this);
+    if(hasReference("onSerialize"))
+        return references["onSerialize"]->call(this);
     else
         return "";
     

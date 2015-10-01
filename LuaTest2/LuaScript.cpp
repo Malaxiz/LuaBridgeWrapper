@@ -21,15 +21,6 @@ LuaScript::~LuaScript() {
     _references.clear();
 }
 
-void LuaScript::doFile() {
-    luaL_dofile(_L, _scriptName.c_str());
-}
-
 LuaReference* LuaScript::getReference(std::string ref) {
     return _references[ref];
 }
-
-//template <class MemFn>
-//void LuaScript::registerFunction(std::string ref, MemFn funcPtr) {
-//    getGlobalNamespace(L).addFunction(ref.c_str(), funcPtr);
-//}

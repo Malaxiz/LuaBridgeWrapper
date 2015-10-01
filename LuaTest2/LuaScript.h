@@ -30,7 +30,7 @@ public:
     LuaScript(lua_State* L, std::string scriptName);
     ~LuaScript();
     
-    void doFile();
+    void doFile() { luaL_dofile(_L, _scriptName.c_str()); }
     
     template<typename ... A>
     LuaReference* registerReference(A ... args) {
@@ -40,9 +40,6 @@ public:
     }
     
     LuaReference* getReference(std::string ref);
-    
-    //    template <class MemFn>
-    //    void registerFunction(std::string ref, MemFn funcPtr);
     
     luabridge::Namespace getNamespace() {
         return luabridge::getGlobalNamespace(_L);
