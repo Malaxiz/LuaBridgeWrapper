@@ -60,6 +60,13 @@ public:
         return getVariable(key)->GetInt();
     }
     
+    LuaReference* getReference(std::string key) {
+        if(hasReference(key))
+            return references[key];
+        else
+            return nullptr;
+    }
+    
     rapidjson::Value* getVariable(std::string key) {
         if(variables.HasMember(key.c_str())) {
             auto keyValue = rapidjson::Value(key.c_str(), variables.GetAllocator());
@@ -68,6 +75,8 @@ public:
         else
             return nullptr;
     }
+    
+    
     
     // =================================================== //
     

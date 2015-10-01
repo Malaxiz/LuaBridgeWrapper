@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 
+
 #include "LuaScript.h"
 #include "LuaReference.h"
 #include "EntityScript.h"
@@ -16,14 +17,20 @@
 #include "Entity.h"
 
 
-std::string printMessage(const std::string s) {
+lua_State* L = luaL_newstate();
+
+int printMessage(const std::string s) {
     std::cout << s << std::endl;
-    return "returned";
+    //return "returned";
+    
+    luaL_Buffer b;
+    luaL_buffinit(L, &b);
+    luaL_pushresult(&b);
+    luaL_addvalue(&b);
 }
 
 int main(int argc, const char* argv[]) {
     
-    lua_State* L = luaL_newstate();
     luaL_openlibs(L);
     
     luabridge::getGlobalNamespace(L)
@@ -34,6 +41,7 @@ int main(int argc, const char* argv[]) {
             .addFunction("setString", &Entity::setStringVariable)
             .addFunction("getInt", &Entity::getIntVariable)
             .addFunction("setInt", &Entity::setIntVariable)
+            .addFunction("getReference", &Entity::getReference)
         .endClass()
         .addFunction("printMessage", printMessage);
 
