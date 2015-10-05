@@ -19,7 +19,7 @@ enemy = {
     },
 
     onLoop = function(this, entity)
-        this:say("My name is " .. this:getString("name") .. ", and I am an enemy")
+        --this:say("My name is " .. this:getString("name") .. ", and I am an enemy")
         entity:setInt("health", entity:getInt("health") - math.random(20))
     end
 

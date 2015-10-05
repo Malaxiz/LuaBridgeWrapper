@@ -36,21 +36,21 @@ void Entity::init(EntityScript* script) {
         }
     }
     
-    references = script->references;
+    references = &script->references;
     
     if(hasReference("onInit"))
-        references["onInit"]->call(this); // Call init function
+        (*references)["onInit"]->call(this); // Call init function
     
 }
 
 void Entity::onLoop(Entity* other) {
     if(hasReference("onLoop"))
-        references["onLoop"]->call(this, other);
+        (*references)["onLoop"]->call(this, other);
 }
 
 std::string Entity::onSerialize() {
     if(hasReference("onSerialize"))
-        return references["onSerialize"]->call(this);
+        return (*references)["onSerialize"]->call(this);
     else
         return "";
     

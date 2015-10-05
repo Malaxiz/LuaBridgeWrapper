@@ -62,7 +62,7 @@ public:
     
     LuaReference* getReference(std::string key) {
         if(hasReference(key))
-            return references[key];
+            return (*references)[key];
         else
             return nullptr;
     }
@@ -83,11 +83,32 @@ public:
     void say(std::string phrase) { std::cout << phrase << "\n"; }
     
     bool hasReference(std::string ref) {
-        return references.find(ref) != references.end();
+        return references->find(ref) != references->end();
+    }
+    
+    // ---------------------------------------------------- //
+    
+    int callScriptFunction(lua_State* L) {
+//        //std::string script = lua_tostring(L, 1);
+//        //std::string function = lua_tostring(L, 2);
+//        
+//        std::cout << "test\n";
+//        
+//        return 1;
+        
+        int argc = lua_gettop(L);
+        
+        for(int i = 2; i <= argc; i++) { // remember to start iterating from 2
+            std::cout << "Variable: " << lua_tostring(L, i) << ", is number: " << lua_isnumber(L, i) << "\n";
+        }
+        
+        lua_pushstring(L, "String returned from C++");
+        
+        return 1;
     }
     
 private:
-    std::map<std::string, LuaReference*> references;
+    std::map<std::string, LuaReference*>* references;
     
 //    LuaReference* onLoopFunc;
 //    LuaReference* onSerializeFunc;

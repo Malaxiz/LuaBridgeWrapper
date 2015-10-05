@@ -19,14 +19,95 @@
 
 lua_State* L = luaL_newstate();
 
-void printMessage(const std::string s) {
-    std::cout << s << std::endl;
-//    //return "returned";
-//    
-//    luaL_Buffer b;
-//    luaL_buffinit(L, &b);
-//    luaL_pushresult(&b);
-//    luaL_addvalue(&b);
+class Value {
+    
+    enum Values {
+        INT = 0,
+        DOUBLE,
+        STRING,
+        BOOL
+    };
+    
+public:
+    Value(std::string s) {
+        stringValue = s;
+        value = Values::STRING;
+    }
+    
+    Value(double d) {
+        if(static_cast<int>(d) == d) {
+            intValue = (int)d;
+            value = Values::INT;
+        } else {
+            doubleValue = (double)d;
+            value = Values::DOUBLE;
+        }
+        
+    }
+    
+    Value(int b) {
+        boolValue = (bool)b;
+        value = Values::BOOL;
+    }
+    
+    void pushValue(lua_State* L) {
+        switch (value) {
+            case Values::STRING:
+                lua_pushstring(L, stringValue.c_str());
+                break;
+                
+            case Values::INT:
+                lua_pushnumber(L, intValue);
+                break;
+                
+            case Value::DOUBLE:
+                lua_pushnumber(L, doubleValue);
+                break;
+                
+            case Values::BOOL:
+                lua_pushnumber(L, boolValue);
+                break;
+                
+            default:
+                std::cout << "Error: values empty.\n";
+                break;
+        }
+    }
+    
+
+    Values value;
+private:
+    
+    std::string stringValue;
+    int intValue;
+    double doubleValue;
+    bool boolValue;
+    
+};
+
+int callLuaFunctionFromLua(lua_State* L) {
+    
+    int argc = lua_gettop(L);
+    
+    assert(lua_isuserdata(L, 1));
+    
+    std::vector<Value> values;
+    for(int i = 1; i <= argc; i++) {
+        if(lua_isboolean(L, i))
+            values.push_back(Value(lua_toboolean(L, i)));
+        else if(lua_isnumber(L, i))
+            values.push_back(Value(lua_tonumber(L, i)));
+        else if(lua_isstring(L, i))
+            values.push_back(Value(lua_tostring(L, i)));
+    }
+    
+    //LuaReference* reference = *((LuaReference**)lua_touserdata(L, 1));
+
+    //lua_getglobal(L, reference->getName());
+    
+    
+    
+    return 1;
 }
 
 int main(int argc, const char* argv[]) {
@@ -34,6 +115,7 @@ int main(int argc, const char* argv[]) {
     luaL_openlibs(L);
     
     luabridge::getGlobalNamespace(L)
+//        .addCFunction("myFunc", &myFunc)
         .beginClass<Entity>("Entity")
             .addConstructor<void(*)(void)>()
             .addFunction("say", &Entity::say)
@@ -42,16 +124,22 @@ int main(int argc, const char* argv[]) {
             .addFunction("getInt", &Entity::getIntVariable)
             .addFunction("setInt", &Entity::setIntVariable)
             .addFunction("getReference", &Entity::getReference)
+            .addCFunction("callCFunction", &Entity::callScriptFunction)
         .endClass()
-        .addFunction("printMessage", printMessage);
-
+        .beginClass<LuaReference>("LuaReference")
+            .addConstructor<void(*) (lua_State*, const char*)>()
+        .endClass();
+    
+    //lua_register(L, "myFunc", myFunc);
+    //lua_register(L, "test", Entity::callScriptFunction);
+    
     // --
     
-    LuaScript eneScript(L, "Enemy.lua");
-    LuaScript entScript(L, "Player.lua");
+    LuaScript enemyLuaScript(L, "Enemy.lua");
+    LuaScript entityLuaScript(L, "Player.lua");
     
-    EntityScript entityScript(&entScript);
-    EntityScript enemyScript(&eneScript);
+    EntityScript entityScript(&entityLuaScript);
+    EntityScript enemyScript(&enemyLuaScript);
     
     // --
     
@@ -66,7 +154,7 @@ int main(int argc, const char* argv[]) {
         myEntity2.onLoop(&myEntity);
     }
     
-    printMessage(myEntity.onSerialize());
-    printMessage(myEntity2.onSerialize()); // Will not run, because enemy does not have a seralize function
+    //printMessage(myEntity.onSerialize());
+    //printMessage(myEntity2.onSerialize()); // Will not run, because enemy does not have a seralize function
     
 }
