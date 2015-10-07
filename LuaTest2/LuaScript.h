@@ -49,6 +49,10 @@ public:
         return _L;
     }
     
+    std::string getScriptName() {
+        return _scriptName;
+    }
+    
 private:
     lua_State* _L;
     std::map<std::string, LuaReference*> _references;

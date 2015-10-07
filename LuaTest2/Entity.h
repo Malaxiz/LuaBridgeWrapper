@@ -14,11 +14,8 @@
 
 #include "LuaScript.h"
 #include "LuaReference.h"
-#include "EntityScript.h"
-
-#include "rapidjson/document.h"
-#include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
+#include "ComponentScript.h"
+#include "Component.h"
 
 
 class Entity {
@@ -26,95 +23,38 @@ class Entity {
 public:
     Entity();
     
-    void init(EntityScript* script);
+    void onInit();
+    void onLoop();
+    void onSerialize(rapidjson::Value* v, rapidjson::Document::AllocatorType* alloc);
     
-    void onLoop(Entity* other);
+    void say(std::string phrase);
     
-    std::string onSerialize();
+    void luaError(lua_State* L, std::string err);
     
-    // ================ Getters and setters ============== //
+    int callScriptFunction(lua_State* L);
     
-    void setStringVariable(std::string key, std::string value) {
-        getVariable(key)->SetString(value.c_str(), (int)value.length(), variables.GetAllocator());
+    // --------------------------------------------------- //
+    
+    std::map<std::string, Component*> components;
+    
+    Component* addComponent(ComponentScript* componentScript) {
+        Component* component = new Component(componentScript, this);
+        components[componentScript->script->getScriptName()] = component;
+        return component;
     }
     
-    void setIntVariable(std::string key, int value) {
-        getVariable(key)->SetInt(value);
-    }
-    
-    std::string getStringVariable(std::string key) {
-        if(!getVariable(key)) {
-            std::cout << "WARNING: Variable not found: " << key << "\n";
-            return "";
-        }
-            
-        return getVariable(key)->GetString();
-    }
-    
-    int getIntVariable(std::string key) {
-        if(!getVariable(key)) {
-            std::cout << "WARNING: Variable not found: " << key << "\n";
-            return 0;
-        }
-        
-        return getVariable(key)->GetInt();
-    }
-    
-    LuaReference* getReference(std::string key) {
-        if(hasReference(key))
-            return (*references)[key];
+    Component* getComponent(std::string componentName) {
+        if(hasComponent(componentName))
+            return components[componentName];
         else
             return nullptr;
     }
     
-    rapidjson::Value* getVariable(std::string key) {
-        if(variables.HasMember(key.c_str())) {
-            auto keyValue = rapidjson::Value(key.c_str(), variables.GetAllocator());
-            return &variables[keyValue];
-        }
-        else
-            return nullptr;
-    }
-    
-    
-    
-    // =================================================== //
-    
-    void say(std::string phrase) { std::cout << phrase << "\n"; }
-    
-    bool hasReference(std::string ref) {
-        return references->find(ref) != references->end();
-    }
-    
-    // ---------------------------------------------------- //
-    
-    int callScriptFunction(lua_State* L) {
-//        //std::string script = lua_tostring(L, 1);
-//        //std::string function = lua_tostring(L, 2);
-//        
-//        std::cout << "test\n";
-//        
-//        return 1;
-        
-        int argc = lua_gettop(L);
-        
-        for(int i = 2; i <= argc; i++) { // remember to start iterating from 2
-            std::cout << "Variable: " << lua_tostring(L, i) << ", is number: " << lua_isnumber(L, i) << "\n";
-        }
-        
-        lua_pushstring(L, "String returned from C++");
-        
-        return 1;
+    bool hasComponent(std::string scriptName) {
+        return components.find(scriptName) != components.end();
     }
     
 private:
-    std::map<std::string, LuaReference*>* references;
-    
-//    LuaReference* onLoopFunc;
-//    LuaReference* onSerializeFunc;
-//    LuaReference* onInitFunc;
-    
-    rapidjson::Document variables;
     
 };
 

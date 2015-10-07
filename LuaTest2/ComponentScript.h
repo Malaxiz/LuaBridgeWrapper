@@ -1,13 +1,13 @@
 //
-//  EntityScript.h
+//  ComponentScript.h
 //  LuaTest2
 //
 //  Created by Didrik Munther on 01/10/15.
 //  Copyright (c) 2015 Didrik Munther. All rights reserved.
 //
 
-#ifndef __LuaTest2__EntityScript__
-#define __LuaTest2__EntityScript__
+#ifndef __LuaTest2__ComponentScript__
+#define __LuaTest2__ComponentScript__
 
 #include <stdio.h>
 #include <map>
@@ -16,10 +16,10 @@
 #include "LuaReference.h"
 
 
-class EntityScript {
+class ComponentScript {
     
 public:
-    EntityScript(LuaScript* script);
+    ComponentScript(LuaScript* script);
     
     LuaScript* script;
     
@@ -33,4 +33,4 @@ public:
     
 };
 
-#endif /* defined(__LuaTest2__EntityScript__) */
+#endif /* defined(__LuaTest2__ComponentScript__) */

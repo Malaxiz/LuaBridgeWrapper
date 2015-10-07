@@ -6,7 +6,9 @@ game = {
 
     references = {
         "variables",
-        "onLoop"
+        "onLoop",
+        "onInit",
+        "onSerialize"
     }
 
 }
@@ -18,11 +20,16 @@ enemy = {
         name = "EnemyName"
     },
 
-    onLoop = function(this, entity)
-        --this:say("My name is " .. this:getString("name") .. ", and I am an enemy")
-        entity:setInt("health", entity:getInt("health") - math.random(20))
-    end
+    onInit = function(this)
+        this:setVariable("name", math.random(50))
+    end,
 
-    
+    onLoop = function(this, entity)
+        this:getParent():say("My name is " .. this:getVariable("name") .. ", and I am an enemy")
+    end,
+
+    onSerialize = function(this)
+        this:addMember("name", this:getVariable("name"))
+    end
 
 }

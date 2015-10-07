@@ -1,15 +1,15 @@
 //
-//  EntityScript.cpp
+//  ComponentScript.cpp
 //  LuaTest2
 //
 //  Created by Didrik Munther on 01/10/15.
 //  Copyright (c) 2015 Didrik Munther. All rights reserved.
 //
 
-#include "EntityScript.h"
+#include "ComponentScript.h"
 
 
-EntityScript::EntityScript(LuaScript* script) : script(script) {
+ComponentScript::ComponentScript(LuaScript* script) : script(script) {
     
     script->doFile();
     

@@ -9,53 +9,91 @@
 #include <map>
 
 #include "Entity.h"
+#include "Value.h"
 
 
 Entity::Entity() {
-    variables.Parse("{}");
+    onInit();
 }
 
-void Entity::init(EntityScript* script) {
+void Entity::onInit() {
+    for(auto& i: components) {
+        i.second->onInit();
+    }
+}
+
+void Entity::onLoop() {
+    for(auto& i: components) {
+        i.second->onLoop();
+    }
+}
+
+void Entity::onSerialize(rapidjson::Value* v, rapidjson::Document::AllocatorType* alloc) {
     
-    if(script->hasReference("variables")) {
-        script->script->getReference(script->object + ".variables")->luaRef.push(script->script->getLuaState());
-        push(script->script->getLuaState(), luabridge::Nil ());
-        while(lua_next(script->script->getLuaState(), -2))
-        {
-            luabridge::LuaRef key = luabridge::LuaRef::fromStack(script->script->getLuaState(), -2);
-            luabridge::LuaRef val = luabridge::LuaRef::fromStack(script->script->getLuaState(), -1);
-            lua_pop(script->script->getLuaState(), 1);
-            
-            auto jsonKey = rapidjson::Value(key.cast<std::string>().c_str(), variables.GetAllocator());
-            if(val.isNumber())
-                variables.AddMember(jsonKey, val.cast<int>(), variables.GetAllocator());
-            else if(val.isString()) {
-                auto value = rapidjson::Value(val.cast<std::string>().c_str(), variables.GetAllocator());
-                variables.AddMember(jsonKey, value, variables.GetAllocator());
-            }
-        }
+    auto componentValues = rapidjson::Value(rapidjson::kObjectType);
+    for(auto& i: components) {
+        auto component = rapidjson::Value(rapidjson::kObjectType);
+        i.second->onSerialize(&component, alloc);
+        componentValues.AddMember(rapidjson::Value(i.first.c_str(), *alloc), component, *alloc);
     }
     
-    references = &script->references;
+    v->AddMember(rapidjson::Value("components", *alloc), componentValues, *alloc);
     
-    if(hasReference("onInit"))
-        (*references)["onInit"]->call(this); // Call init function
     
-}
-
-void Entity::onLoop(Entity* other) {
-    if(hasReference("onLoop"))
-        (*references)["onLoop"]->call(this, other);
-}
-
-std::string Entity::onSerialize() {
-    if(hasReference("onSerialize"))
-        return (*references)["onSerialize"]->call(this);
-    else
-        return "";
+//    std::cout << "Is string: " << (*references)["onSerialize"]->call(this).isString() << "\n" <<
+//    "Is number: " << (*references)["onSerialize"]->call(this).isNumber() << "\n";
     
 //    rapidjson::StringBuffer sb;
 //    rapidjson::Writer<rapidjson::StringBuffer> writer(sb);
 //    variables.Accept(writer);
 //    std::cout << sb.GetString() << "\n";
+    
 }
+
+void Entity::say(std::string phrase) {
+    std::cout << phrase << "\n";
+}
+
+void Entity::luaError(lua_State* L, std::string err) {
+    std::cout << err << "\n";
+    lua_pushstring(L, err.c_str());
+}
+
+int Entity::callScriptFunction(lua_State* L) {
+    
+//    int argc = lua_gettop(L);
+//    std::string function = lua_tostring(L, 2);
+//    
+//    std::vector<Value> values;
+//    for(int i = 3; i < argc; i++) {
+//        values.push_back(Value(L, i));
+//    }
+//    
+//    auto ref = getReference("onSerialize");
+//    if(ref) {
+//        ref->beginCall();
+//        ref->addArgument(this);
+//        std::cout << "Testcalling a function: " << ref->endCall() << "\n";
+//    } else {
+//        std::cout << "Function does not exist: " << function << "\n";
+//    }
+    
+//    for(int i = 2; i <= argc; i++) { // remember to start iterating from 2
+//        std::cout << "Variable: " << lua_tostring(L, i) << ", is number: " << lua_isnumber(L, i) << "\n";
+//    }
+    
+    lua_pushstring(L, "String returned from C++");
+    
+    return 1;
+}
+
+
+
+
+
+
+
+
+
+
+
