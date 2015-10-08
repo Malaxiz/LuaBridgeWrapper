@@ -45,6 +45,10 @@ public:
         return parent;
     }
     
+    ComponentScript* getScript() {
+        return script;
+    }
+    
 private:
     Entity* parent;
     

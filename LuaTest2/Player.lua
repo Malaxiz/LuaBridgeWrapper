@@ -1,4 +1,5 @@
 math.randomseed(os.time())
+require("Enemy")
 
 game = {
 
@@ -8,7 +9,8 @@ game = {
         "onInit",
         "onLoop",
         "onSerialize",
-        "variables"
+        "variables",
+        "doPlayerStuff"
     }
 
 }
@@ -24,23 +26,17 @@ player = {
         this:setVariable("name", tostring(math.random(20)))
     end,
 
-    onLoop = function(this, entity)
-        --a = this:callCFunction("aaaa", 5.05, "123231111", 1234)
-        --print(a)
-
+    onLoop = function(this)
         this:getParent():say("My name is " .. this:getVariable("name") .. ", and my health is " .. this:getVariable("health"))
     end,
 
     onSerialize = function(this)
         this:addMember("name", this:getVariable("name"))
         this:addMember("health", this:getVariable("health"))
+    end,
 
-        --json = require "json"
-
-        --seri = {}
-        --seri.name = this:getVariable("name")
-        --seri.health = this:getVariable("health")
-        --encoded = json.encode(seri)
-        --return encoded
+    doPlayerStuff = function(this, other)
+        otherEnemy = other:getComponent("Enemy.lua")
+        enemy.doEnemyStuff(other, this:getParent())
     end
 }

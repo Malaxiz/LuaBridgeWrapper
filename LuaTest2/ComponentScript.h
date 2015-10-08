@@ -29,6 +29,13 @@ public:
         return references.find(ref) != references.end();
     }
     
+    LuaReference* getReference(std::string ref) {
+        if(hasReference(ref))
+            return references[ref];
+        else
+            return nullptr;
+    }
+    
     std::map<std::string, LuaReference*> references;
     
 };

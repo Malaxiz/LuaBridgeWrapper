@@ -31,7 +31,7 @@ public:
     
     void luaError(lua_State* L, std::string err);
     
-    int callScriptFunction(lua_State* L);
+    
     
     // --------------------------------------------------- //
     

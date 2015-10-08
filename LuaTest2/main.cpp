@@ -13,31 +13,12 @@
 #include "LuaReference.h"
 
 #include "Entity.h"
-#include "Value.h"
+#include "Component.h"
+
+using namespace rapidjson;
 
 
 lua_State* L = luaL_newstate();
-
-//int callLuaFunctionFromLua(lua_State* L) {
-//    
-//    int argc = lua_gettop(L);
-//    
-//    std::vector<Value> values;
-//    for(int i = 1; i <= argc; i++) {
-//        if(lua_isboolean(L, i))
-//            values.push_back(Value(lua_toboolean(L, i)));
-//        else if(lua_isnumber(L, i))
-//            values.push_back(Value(lua_tonumber(L, i)));
-//        else if(lua_isstring(L, i))
-//            values.push_back(Value(lua_tostring(L, i)));
-//    }
-//    
-//    //LuaReference* reference = *((LuaReference**)lua_touserdata(L, 1));
-//
-//    //lua_getglobal(L, reference->getName());
-//    
-//    return 1;
-//}
 
 int main(int argc, const char* argv[]) {
     
@@ -47,7 +28,6 @@ int main(int argc, const char* argv[]) {
         .beginClass<Entity>("Entity")
             .addConstructor<void(*)(void)>()
             .addFunction("say", &Entity::say)
-            .addCFunction("callCFunction", &Entity::callScriptFunction)
             .addFunction("getComponent", &Entity::getComponent)
             .addFunction("addComponent", &Entity::addComponent)
         .endClass()
@@ -55,7 +35,8 @@ int main(int argc, const char* argv[]) {
             .addCFunction("getVariable", &Component::getVariable)
             .addCFunction("setVariable", &Component::setVariable)
             .addFunction("getParent", &Component::getParent)
-            .addFunction("addMember", &Component::addMember);
+            .addFunction("addMember", &Component::addMember)
+        .endClass();
     
     // --
     
@@ -74,12 +55,14 @@ int main(int argc, const char* argv[]) {
     Entity myEntity2;
     myEntity2.addComponent(&enemyScript);
     
-    myEntity.onLoop();
-    myEntity2.onLoop();
+//    myEntity.onLoop();
+//    myEntity2.onLoop();
+    
+    myEntity.getComponent("Player.lua")->getScript()->getReference("doPlayerStuff")->call(myEntity.getComponent("Player.lua"), myEntity2);
     
     // --
     
-    rapidjson::Document d;
+    Document d;
     d.Parse("{}");
     
     rapidjson::Value entityValue(rapidjson::kObjectType);

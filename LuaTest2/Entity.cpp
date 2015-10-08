@@ -9,7 +9,6 @@
 #include <map>
 
 #include "Entity.h"
-#include "Value.h"
 
 
 Entity::Entity() {
@@ -57,34 +56,6 @@ void Entity::say(std::string phrase) {
 void Entity::luaError(lua_State* L, std::string err) {
     std::cout << err << "\n";
     lua_pushstring(L, err.c_str());
-}
-
-int Entity::callScriptFunction(lua_State* L) {
-    
-//    int argc = lua_gettop(L);
-//    std::string function = lua_tostring(L, 2);
-//    
-//    std::vector<Value> values;
-//    for(int i = 3; i < argc; i++) {
-//        values.push_back(Value(L, i));
-//    }
-//    
-//    auto ref = getReference("onSerialize");
-//    if(ref) {
-//        ref->beginCall();
-//        ref->addArgument(this);
-//        std::cout << "Testcalling a function: " << ref->endCall() << "\n";
-//    } else {
-//        std::cout << "Function does not exist: " << function << "\n";
-//    }
-    
-//    for(int i = 2; i <= argc; i++) { // remember to start iterating from 2
-//        std::cout << "Variable: " << lua_tostring(L, i) << ", is number: " << lua_isnumber(L, i) << "\n";
-//    }
-    
-    lua_pushstring(L, "String returned from C++");
-    
-    return 1;
 }
 
 

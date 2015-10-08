@@ -8,7 +8,8 @@ game = {
         "variables",
         "onLoop",
         "onInit",
-        "onSerialize"
+        "onSerialize",
+        "doEnemyStuff"
     }
 
 }
@@ -24,12 +25,17 @@ enemy = {
         this:setVariable("name", math.random(50))
     end,
 
-    onLoop = function(this, entity)
+    onLoop = function(this)
         this:getParent():say("My name is " .. this:getVariable("name") .. ", and I am an enemy")
     end,
 
     onSerialize = function(this)
         this:addMember("name", this:getVariable("name"))
+    end,
+
+    doEnemyStuff = function(this, other)
+        playerComponent = other:getComponent("Player.lua")
+        playerComponent:setVariable("health", playerComponent:getVariable("health") - 20)
     end
 
 }

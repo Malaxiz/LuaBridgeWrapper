@@ -412,6 +412,7 @@ private:
         If an error occurs, a LuaException is thrown.
     */
     /** @{ */
+      
     LuaRef const operator() () const
     {
       push (m_L);

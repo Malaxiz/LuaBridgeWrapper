@@ -7,6 +7,7 @@
 //
 
 #include "Component.h"
+#include "Entity.h"
 
 
 Component::Component(ComponentScript* script, Entity* parent) : script(script), parent(parent) {
@@ -66,6 +67,33 @@ void Component::addMember(std::string key, std::string value) {
     tempV->AddMember(rapidjson::Value(key.c_str(), *tempAlloc), rapidjson::Value(value.c_str(), *tempAlloc), *tempAlloc);
     
 }
+
+//int Component::callScriptFunction(lua_State* L) {
+//    
+////    int argc = lua_gettop(L);
+////    std::string component = lua_tostring(L, 2);
+////    std::string function = lua_tostring(L, 3);
+//    
+//    
+//    //auto ref = script->script->getReference();
+////    if(ref) {
+////        ref->beginCall();
+////        ref->addArgument(this);
+////        std::cout << "Testcalling a function: " << ref->endCall() << "\n";
+////    } else {
+////        std::cout << "Function does not exist: " << functionString << "\n";
+////    }
+//    
+//    
+//    
+//    //    for(int i = 2; i <= argc; i++) { // remember to start iterating from 2
+//    //        std::cout << "Variable: " << lua_tostring(L, i) << ", is number: " << lua_isnumber(L, i) << "\n";
+//    //    }
+//    
+//    lua_pushstring(L, "String returned from C++");
+//    
+//    return 1;
+//}
 
 rapidjson::Value* Component::getJsonValue(std::string key) {
     if(variables.HasMember(key.c_str())) {
